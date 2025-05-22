@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Дневник тренировок</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>.chart-img { max-width: 100%; margin-bottom: 2em; } .container { max-width: 800px; margin: auto; }</style>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <h1 class="mb-4">Дневник</h1>
+  <form class="mb-3" method="get" action="/">
+    <label>Дата:</label>
+    <input type="date" name="date" class="form-control" value="{{ selected_date }}">
+    <button type="submit" class="btn btn-primary mt-2">Показать</button>
+  </form>
+  <h2>Новая запись</h2>
+  <form method="post">
+    <input type="hidden" name="date" value="{{ selected_date }}">
+    <select name="type" class="form-select mb-2">
+      <option value="train">Тренировка</option>
+      <option value="water">Вода</option>
+      <option value="supp">БАДы</option>
+      <option value="sleep">Сон</option>
+      <option value="food">Питание (калории)</option>
+      <option value="steps">Шаги</option>
+    </select>
+    <input type="text" name="data" class="form-control mb-2" required>
+    <button type="submit" class="btn btn-success">Сохранить</button>
+  </form>
+  <h2 class="mt-5">Записи за {{ selected_date }}</h2>
+  {% if records %}
+    {% for category, items in records.items() %}
+      <h4>{{ category.capitalize() }}</h4>
+      <ul class="list-group mb-3">
+        {% for item in items %}
+          <li class="list-group-item">{{ item }}</li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+  {% else %}
+    <p>Нет записей.</p>
+  {% endif %}
+  <h2>Статистика за неделю</h2>
+  {% for label, img in plots.items() %}
+    <h5>{{ label.capitalize() }}</h5>
+    <img src="data:image/png;base64,{{ img }}" class="chart-img" />
+  {% endfor %}
+  <p class="mt-4">
+    <a href="/export" class="btn btn-outline-primary">📤 Экспорт CSV</a>
+    <a href="/logout" class="btn btn-outline-secondary">Выход</a>
+  </p>
+</div>
+</body>
+</html>
